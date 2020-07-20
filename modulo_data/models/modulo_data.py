@@ -69,7 +69,7 @@ class modulo_data(models.Model):
 			
 			id_externo=id_ext[0][0] if id_ext else ''
 			
-			dato+=id_externo+'; '+ str(rec.subject)+'; '+ str(rec.date) +'; '+ str(rec.body)+'; '+str(rec.attachment_ids.id)+'; '+str(rec.parent_id.id)+'; '+str(rec.child_ids.ids) +'; '+str(rec.model)+'; '
+			dato+=id_externo+'; '+ str(rec.subject)+'; '+ str(rec.date) +'; '+ str(rec.body)+'; '+str(rec.attachment_ids)+'; '+str(rec.parent_id.id)+'; '+str(rec.child_ids.ids) +'; '+str(rec.model)+'; '
 			dato+=	str(rec.res_id)+'; '+ str(rec.record_name)+'; '+ str(rec.message_type)+'; '+ str(rec.subtype_id.id)+'; '+ str(rec.mail_activity_type_id.id)
 			dato+= '; '+str(rec.email_from)+'; '+ str(rec.author_id.id)+'; '+str(rec.author_avatar)+'; '+str(rec.partner_ids.ids)+'; '+str(rec.needaction_partner_ids.ids)
 			dato+= '; '+str(rec.needaction)+'; '+str(rec.channel_ids.ids)+'; '+str(rec.notification_ids.ids)+'; '+str(rec.starred_partner_ids.ids)+'; '+str(rec.starred)
