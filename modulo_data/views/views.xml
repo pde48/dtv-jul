@@ -1,0 +1,136 @@
+<odoo>
+  
+    <!-- explicit list view definition -->
+    
+    <record model="ir.ui.view" id="modulo_data_form">
+      <field name="name">moduloData list</field>
+      <field name="model">modulo.data</field>
+       <field name="arch" type="xml"> 
+    <form>
+     <sheet>        
+    <notebook>
+          <page string="Exportar Registros" name="export">
+            
+              <h1>Exportacion de los registros de CRM - HELPDESK a CSV</h1>
+                <br/><br/>
+                <group>
+                       <field name="archivo_nombre" invisible="1"/>
+                       <field name="archivo_contenido" filename="archivo_nombre"  widget="binary"/>
+                       <field name="bandera" widget="many2onebutton" invisible="1"/>
+                </group>
+               
+                          <br/><br/>               
+                
+                    <button name="export_crm_mensajes" string="Exportar Mensajes  " type="object" style="margin:20px">
+                      <img src="/modulo_data/static/images/crm.png" alt="Exportar" height="60px" />
+                    </button>
+                    
+                     <button name="export_crm_tracking" string="Exportar Tracking  " type="object" style="margin:20px">
+                        <img src="/modulo_data/static/images/crm.png" alt="Exportar" height="60px" />
+                     </button>
+                    
+                    <button name="export_helpdesk_mensajes" string="Exportar Mensajes Helpdesk  " type="object" style="margin:20px">
+                        <img src="/modulo_data/static/images/help.png" alt="Exportar" height="60px" />
+                    </button>
+                    
+                     <button name="export_helpdesk_tracking" string="Exportar Tracking Helpdesk  " type="object" style="margin:20px">
+                        <img src="/modulo_data/static/images/help.png" alt="Exportar" height="60px" />
+                     </button>
+                
+                  <ol>
+                    <li>Exportar los registros con el metodo clasico de Odoo para que el mismo genere un IdExterno y poder usarlo para las exportaciones e importaciones entre versiones</li>
+                    <li>Generar los CSV con los botones. Se deben ir generando de izquierda a derecha</li>
+                    
+                  </ol>
+          </page>       
+                
+                    
+               <page string="Importar Registros" name="import">
+                <br/>
+                 
+                   <h1>Importacion de registros a CSV</h1>
+                   <br/>
+                    <group>
+                        <field name="file" />
+                    </group> 
+                    <field name="mostrar" readonly="1" style="color:blue"/>
+                    <br/>
+                     <button name="import_mensajes" string="Importar Mensajes  " type="object" style="margin:20px">
+                      <img src="/modulo_data/static/images/crm.png" alt="Importar" height="60px" />
+                    </button>
+                    
+                                         
+                     <button name="import_tracking" string="Importar Tracking  " type="object" style="margin:20px">
+                        <img src="/modulo_data/static/images/help.png" alt="Importar" height="60px" />
+                     </button>
+                    <ul>
+                        <li>Se importan registros haciendo uso de IdExterno</li>
+                    </ul>
+                </page>
+                
+                <page string="Exportar SQL" name="exportsql">
+                 
+                   <h1>Exportar los registros de las tablas</h1>
+                   
+                    <group>
+                        <field name="tablas" widget="selection" style="width:40%%" />
+                        <field name="archivo_nombre_sql" invisible="1"/>
+                       <field name="archivo_sql" filename="archivo_nombre_sql"  widget="binary"/>
+                    </group> 
+
+                     <button name="export_sql" string="Exportar Registros  " type="object" style="margin:100px 0px 25px 200px">
+                        <img src="/modulo_data/static/images/sql.png" alt="Exportar" height="60px" />
+                     </button>
+                     <ul>
+                        <li>Otra alternativa es obtener los registros directo de la base de datos y pasarlas a CSV</li>
+                    </ul>
+
+               </page>
+       
+       </notebook>
+
+            </sheet>
+       </form>
+        </field> 
+    </record> 
+
+   <record id="view_tree_moduloData" model="ir.ui.view"> 
+        <field name="name">ModuloData Tree</field> 
+        <field name="model">modulo.data</field> 
+        <field name="arch" type="xml"> 
+           <tree> 
+                   <field name="archivo_nombre" invisible="1"/>
+                   <field name="archivo_contenido" filename="archivo_nombre"  widget="download_link"/>
+                    
+           </tree> 
+        </field> 
+    </record> 
+  
+
+    <!-- actions -->
+ 
+    <record model="ir.actions.act_window" id="modulo_data.action_window">
+      <field name="name">moduloData window</field>
+      <field name="res_model">modulo.data</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    
+
+    <!-- Top menu item -->
+   
+    <menuitem name="ExportData" id="modulo_data.menu_root"/>
+   
+    <!-- menu categories -->
+    
+    <menuitem name="Exportar Registros" id="modulo_data.menu_1" parent="modulo_data.menu_root"/>
+   
+    
+    <!-- actions -->
+   
+    <menuitem name="Registros" id="modulo_data.menu_1_list" parent="modulo_data.menu_1"
+              action="modulo_data.action_window"/>
+   
+    
+ 
+</odoo>

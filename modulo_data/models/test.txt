@@ -1,0 +1,168 @@
+	def import_crm_mensajes(self):
+		self.mostrar=''
+		#Decodificación y separación en líneas
+		lineas = base64.b64decode(self.file)
+		
+		lineas= lineas.decode("utf-8")
+		lineas = lineas.split('\n')
+		
+		no_titulo=None
+		lineas_archivo=0
+
+		
+		for i in lineas:
+						
+			lineas_archivo+=1
+
+			# Separando los datos del movimiento
+			mov = i.split(';')
+			
+			campos={}
+			res_id = None
+
+			if len(mov)>1 and lineas_archivo>1:
+								
+
+				# ['mail_message_4424_2e4e6d79', ' False', ' 2020-06-05 03:08:41', ' <p>Nota de AntelAuto</p>', ' False',
+				#  ' 4420', ' []', ' crm.lead', ' 418', ' 1.000 AntelAuto plan de marketing', ' comment', ' 2', 
+				#  ' False', ' "Administrator" <admin@example.com>', ' 3', ' False', ' []', ' []', ' False', ' []',
+				#   ' []', ' []', ' False', ' []', ' False',
+				#    ' <980612319276319.1591326521.647703647613525-openerp-418-crm.lead@maquina>', 
+				#    ' "Administrator" <admin@example.com>', ' ir.mail_server()', ' Nota de AntelAuto', 
+				#    ' True', ' 4424', ' 1.000 AntelAuto plan de marketing', ' res.users(1,)', ' 2020-06-05 03:08:41', 
+				#    ' res.users(1,)', ' 2020-06-05 03:08:41']
+				
+				id_externo=mov[0]
+
+				sql = '''select res_id from ir_model_data where name = %(id_ext)s '''
+				self.env.cr.execute(sql, {'id_ext': id_externo})
+				id_ext = self.env.cr.fetchall()
+				#print(id_ext)
+				res_users= int(''.join([s for s in mov[32] if s.isdigit()]))
+				mail_= ''.join([s for s in mov[27].split() if s.isdigit()])
+				mail_= int(mail_) if mail_ and mail_!=''  else False 
+				
+				if id_ext:
+					res_id = id_ext[0][0]
+					crm_mjes=self.env['mail.message'].search([('id','=',res_id)])
+					campos={
+					'subject':eval(mov[1]),
+					'date':datetime.strptime(mov[2][1:], '%Y-%m-%d %H:%M:%S') if mov[2] else False,
+					'body':mov[3][1:] ,  
+					'attachment_ids':(6, 0, [eval(mov[4])]) if eval(mov[6]) else False ,
+					'parent_id':eval(mov[5]) if eval(mov[5]) else False,
+					'child_ids': (6, 0, [eval(mov[6])]) if eval(mov[6]) else False ,
+					'model':mov[7][1:] ,
+					'res_id':eval(mov[8]) if eval(mov[8]) else False,
+					'record_name':mov[9][1:],
+					'message_type':mov[10][1:],
+					'subtype_id':eval(mov[11]) if eval(mov[11]) else False,
+					'mail_activity_type_id':eval(mov[12]) if eval(mov[12]) else False, 
+					'email_from':mov[13][2:],
+					'author_id':eval(mov[14]) if eval(mov[14]) else False,
+					'author_avatar': eval(mov[15][1:]) if eval(mov[15][1:]) else False,
+					'partner_ids':(6, 0, [eval(mov[16])]) if eval(mov[16]) else False  ,
+					'needaction_partner_ids':(6, 0, [eval(mov[17])]) if eval(mov[17]) else False  , 
+					'needaction':eval(mov[18]) ,
+					'channel_ids':(6, 0, [eval(mov[19])]) if eval(mov[19]) else False ,
+					'notification_ids':(6, 0, [eval(mov[20])]) if eval(mov[20]) else False,
+					'starred_partner_ids':(6, 0, [eval(mov[21])]) if eval(mov[21]) else False ,
+					'starred':eval(mov[22]) , 
+					'tracking_value_ids':(6, 0, eval(mov[23])) if eval(mov[23]) else False ,
+					'no_auto_thread':eval(mov[24]) ,
+					'message_id':mov[25][1:] if mov[25] else False , 
+					'reply_to':mov[26][2:],
+					'mail_server_id':mail_ if mail_ else False, 
+					'description':mov[28][1:],
+					'website_published':eval(mov[29]) ,
+					'display_name':mov[31][1:],
+					'create_uid': res_users if res_users else False,
+					'create_date':datetime.strptime(mov[33][1:], '%Y-%m-%d %H:%M:%S') if mov[33] else False, 
+					'write_uid':res_users if res_users else False,
+					'write_date':datetime.strptime(mov[35][1:], '%Y-%m-%d %H:%M:%S') if mov[35] else False,
+
+					}
+					try:
+						import ipdb; ipdb.set_trace()
+						crm_mjes.write(campos)
+						self.mostrar='Se importaron correctamente los registros de CRM Mensajes'
+
+					except Exception as e:
+						self.mostrar='Error en registros de CRM Mensjaes, id_ext' + str(res_id) +'res_id'+str(crm_mjes.id)
+						self.env.cr.rollback()
+						raise e
+
+	def import_crm_tracking(self):
+		#Decodificación y separación en líneas
+		self.mostrar=''
+		lineas = base64.b64decode(self.file)
+		
+		lineas= lineas.decode("utf-8")
+		lineas = lineas.split('\n')
+		
+		no_titulo=None
+		lineas_archivo=0
+
+		
+		for i in lineas:
+						
+			lineas_archivo+=1
+
+			# Separando los datos del movimiento
+			mov = i.split(';')
+			
+			campos={}
+			res_id = None
+
+			if len(mov)>1 and lineas_archivo>1:
+									
+				id_externo=mov[0]
+				sql = '''select res_id from ir_model_data where name = %(id_ext)s '''
+				self.env.cr.execute(sql, {'id_ext': id_externo})
+				id_ext = self.env.cr.fetchall()
+				#print(id_ext)
+				res_users= int(''.join([s for s in mov[19] if s.isdigit()]))
+				mail_= int(''.join([s for s in mov[16] if s.isdigit()]))
+
+				#['mail_message_4417_250918d3', 'planned_revenue', ' \ufeffIngreso estimado', ' float', ' 0', ' 88888.0', ' 0.0',
+				#'False', 'False', ' False', '0', '99999.0', '0.0', ' False', ' False', ' False', ' mail.message(4417,)', 
+				#' 10', ' planned_revenue', ' res.users(1,)', ' 2020-06-03 04:02:52', ' res.users(1,)', ' 2020-06-03 04:02:52']
+
+													
+				if id_ext:
+					res_id = id_ext[0][0]
+					crm_mjes_track=self.env['mail.tracking.value'].search([('mail_message_id','=',res_id)])
+					campos={
+						'field':mov[1][1:],
+						'field_desc':mov[2][1:],
+						'field_type':mov[3][1:] if mov[3] else False ,
+						'old_value_integer':eval(mov[4]) if eval(mov[4]) else False ,
+						'old_value_float':mov[5] if eval(mov[5]) else False ,
+						'old_value_monetary':eval(mov[6]) if eval(mov[6]) else False ,
+						'old_value_char':mov[7] if mov[7] and mov[7] != 'False' else False ,
+						'old_value_text':mov[8] if mov[8] and mov[8] != 'False'  else False ,
+						'old_value_datetime':datetime.strptime(mov[9][1:], '%Y-%m-%d %H:%M:%S') if eval(mov[9]) else False,
+						'new_value_integer':eval(mov[10]) if eval(mov[10]) else False ,
+						'new_value_float':eval(mov[11]) if eval(mov[11]) else False ,
+						'new_value_monetary':eval(mov[12]) if eval(mov[12]) else False ,
+						'new_value_char':mov[13][1:] if mov[13][1:] and mov[13][1:] != 'False' else False ,
+						'new_value_text':mov[14][1:] if mov[14][1:] and mov[14][1:] != 'False' else False ,
+						'new_value_datetime':datetime.strptime(mov[15][1:], '%Y-%m-%d %H:%M:%S') if eval(mov[15]) else False,
+						'mail_message_id':mail_ if mail_ else False ,
+						'display_name':mov[18][1:],
+						'create_uid':res_users,
+						'create_date':datetime.strptime(mov[20][1:], '%Y-%m-%d %H:%M:%S') if mov[20] else False,
+						'write_uid':res_users,
+						'write_date':datetime.strptime(mov[22][1:], '%Y-%m-%d %H:%M:%S') if mov[22] else False,
+ 						}
+					
+					try:
+						crm_mjes_track.write(campos)
+						self.mostrar='Se importaron correctamente los registros de CRM tracking'
+						
+
+					except Exception as e:
+						self.mostrar='Error en registros de CRM tracking, id_ext' + str(res_id) +'res_id'+str(eval(mov[17]))
+						print('Error en resgistro ','Id_ext',res_id,'res_id',eval(mov[17]))
+						self.env.cr.rollback()
+						raise e
